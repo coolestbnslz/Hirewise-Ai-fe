@@ -61,7 +61,25 @@ const mapBackendJobToFrontend = (backendJob: any): Job => {
     };
 };
 
+export interface ExtractedFields {
+    company_name?: string;
+    role?: string;
+    seniority?: string;
+    raw_jd?: string;
+    budget_info?: string;
+    must_have_skills?: string[];
+    nice_to_have?: string[];
+}
+
 export const jobsApi = {
+    extractFields: async (text: string): Promise<ExtractedFields> => {
+        const response = await request<ExtractedFields>('/api/jobs/extract-fields', {
+            method: 'POST',
+            body: JSON.stringify({ text }),
+        });
+        return response;
+    },
+
     create: async (data: Omit<Job, 'id' | 'status'>) => {
         const response = await request<any>('/api/jobs', {
             method: 'POST',
