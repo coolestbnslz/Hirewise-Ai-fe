@@ -32,15 +32,25 @@ const mapBackendJobToFrontend = (backendJob: any): Job => {
             // Backend example: { name: "email", type: "email", label: "Email Address", required: true }
             // Frontend expects: { id: string, label: string, type: ..., required: boolean }
             formFields = parsed.map((field: any) => ({
-                id: field.name || field.id,
-                label: field.label,
-                type: field.type === 'email' || field.type === 'tel' ? 'text' : field.type, // Map specific types to generic text if needed
-                required: field.required
+                id: field.name || field.id || String(Math.random()),
+                label: field.label || 'Field',
+                type: (field.type === 'email' || field.type === 'tel' ? 'text' : (field.type || 'text')) as 'text' | 'textarea' | 'file',
+                required: Boolean(field.required)
             }));
         } catch (e) {
             console.error('Failed to parse apply_form_fields', e);
             formFields = [];
         }
+    } else if (Array.isArray(formFields) && formFields.length > 0) {
+        // Handle case where apply_form_fields is already an array of objects
+        formFields = formFields.map((field: any) => ({
+            id: field.name || field.id || String(Math.random()),
+            label: field.label || 'Field',
+            type: (field.type === 'email' || field.type === 'tel' ? 'text' : (field.type || 'text')) as 'text' | 'textarea' | 'file',
+            required: Boolean(field.required)
+        }));
+    } else {
+        formFields = [];
     }
 
     return {
