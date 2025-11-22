@@ -786,34 +786,34 @@ const RecruiterDashboard = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50/50 -m-6 p-6">
+        <div className="min-h-screen bg-background/50 -m-6 p-6">
             <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in duration-500">
 
                 {!hasSearched ? (
                     <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8">
                         <div className="text-center space-y-4">
-                            <div className="h-16 w-16 bg-white rounded-xl shadow-sm border border-gray-100 flex items-center justify-center mx-auto mb-6">
-                                <svg className="h-8 w-8 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <div className="h-16 w-16 bg-card rounded-xl shadow-sm border border-border flex items-center justify-center mx-auto mb-6">
+                                <svg className="h-8 w-8 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                     <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
                                     <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
                                     <line x1="12" y1="22.08" x2="12" y2="12" />
                                 </svg>
                             </div>
-                            <h1 className="text-4xl font-bold tracking-tight text-gray-900">PeopleGPT by HireWiseAI</h1>
-                            <p className="text-lg text-gray-500">Find exactly who you're looking for, in seconds.</p>
+                            <h1 className="text-4xl font-bold tracking-tight text-foreground">PeopleGPT by <span className="bg-clip-text text-transparent bg-gradient-to-r from-black to-purple-600 dark:from-white dark:to-purple-400">HireWiseAI</span></h1>
+                            <p className="text-lg text-muted-foreground">Find exactly who you're looking for, in seconds.</p>
                         </div>
 
-                        <div className="w-full max-w-3xl space-y-6">
-                            <div className="flex items-center gap-4">
+                        <div className="w-full max-w-full space-y-6">
+                            <div className="flex items-start gap-4">
                                 <div className="flex-1">
                                     <SearchBox onSearch={handleSearch} />
                                 </div>
                                 <Button
                                     variant="outline"
                                     onClick={handleOpenPastSearches}
-                                    className="gap-2"
+                                    className="gap-2 py-6 px-6 text-base whitespace-nowrap flex-shrink-0 shadow-lg border-border hover:border-primary/30 hover:bg-accent transition-all"
                                 >
-                                    <History className="h-4 w-4" />
+                                    <History className="h-5 w-5" />
                                     {isPastSearchesOpen ? 'Hide' : 'Show'} Past Searches
                                 </Button>
                             </div>
@@ -821,49 +821,51 @@ const RecruiterDashboard = () => {
                             {/* Past Searches Cards */}
                             {isPastSearchesOpen && (
                                 <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <History className="h-4 w-4 text-muted-foreground" />
+                                        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Search History</h2>
+                                    </div>
                                     {isLoadingPastSearches ? (
                                         <div className="flex justify-center py-8">
-                                            <Loader2 className="h-6 w-6 animate-spin text-purple-600" />
+                                            <Loader2 className="h-6 w-6 animate-spin text-primary" />
                                         </div>
                                     ) : pastSearches.length === 0 ? (
-                                        <div className="text-center py-8 text-gray-500 bg-white rounded-lg border border-gray-200">
-                                            <History className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                                        <div className="text-center py-8 text-muted-foreground bg-card rounded-lg border border-border">
+                                            <History className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
                                             <p>No past searches found</p>
                                         </div>
                                     ) : (
-                                        <div className="space-y-4">
+                                        <div className="space-y-6">
                                             {pastSearches.map((search) => (
                                                 <React.Fragment key={search.id || search.searchId}>
                                                     <Card
-                                                        className="hover:shadow-lg transition-all border-gray-200"
+                                                        className="hover:shadow-lg transition-all border-2 border-border bg-card"
                                                     >
-                                                        <CardContent className="p-5">
+                                                        <CardContent className="p-6">
                                                             <div className="space-y-4">
                                                                 {/* Header Section */}
                                                                 <div className="flex items-start gap-4">
-                                                                    <div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                                                                        <span className="text-purple-700 font-bold text-sm">
-                                                                            {(search.searchText || search.query) ? (search.searchText || search.query)!.charAt(0).toUpperCase() : 'S'}
-                                                                        </span>
+                                                                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                                                        <History className="h-4 w-4 text-primary" />
                                                                     </div>
                                                                     <div className="flex-1 min-w-0">
                                                                         {(search.searchText || search.query) && (
-                                                                            <h3 className="text-lg font-medium text-gray-900 mb-1">
+                                                                            <h3 className="text-lg font-medium text-foreground mb-1">
                                                                                 {search.searchText || search.query}
                                                                             </h3>
                                                                         )}
-                                                                        <p className="text-sm text-gray-500">
+                                                                        <p className="text-sm text-muted-foreground">
                                                                             Do these filters look good? ({search.totalResults || search.totalMatches || 0} matches)
                                                                         </p>
                                                                         {(search.createdAt || search.updatedAt) && (
-                                                                            <p className="text-xs text-gray-400 mt-1">
+                                                                            <p className="text-xs text-muted-foreground/70 mt-1">
                                                                                 {formatDate(search.createdAt || search.updatedAt)}
                                                                             </p>
                                                                         )}
                                                                     </div>
                                                                     <div className="flex items-center gap-2">
                                                                         {isLoadingSearchDetails && (selectedSearchDetails?.searchId === (search.searchId || search.id) || selectedSearchDetails?.id === (search.searchId || search.id)) && (
-                                                                            <Loader2 className="h-5 w-5 animate-spin text-purple-600 flex-shrink-0" />
+                                                                            <Loader2 className="h-5 w-5 animate-spin text-primary flex-shrink-0" />
                                                                         )}
                                                                         <Button
                                                                             variant="ghost"
@@ -877,9 +879,9 @@ const RecruiterDashboard = () => {
                                                                             title="Refresh search"
                                                                         >
                                                                             {refreshingSearchId === (search.searchId || search.id) ? (
-                                                                                <Loader2 className="h-4 w-4 animate-spin text-purple-600" />
+                                                                                <Loader2 className="h-4 w-4 animate-spin text-primary" />
                                                                             ) : (
-                                                                                <RefreshCw className="h-4 w-4 text-gray-500 hover:text-purple-600" />
+                                                                                <RefreshCw className="h-4 w-4 text-muted-foreground hover:text-primary" />
                                                                             )}
                                                                         </Button>
                                                                     </div>
@@ -889,8 +891,8 @@ const RecruiterDashboard = () => {
                                                                 <div className="flex items-center gap-6 text-sm">
                                                                     {(search.totalResults !== undefined || search.totalMatches !== undefined) && (
                                                                         <div className="flex items-center gap-2">
-                                                                            <Users className="h-4 w-4 text-gray-500" />
-                                                                            <span className="text-gray-700 font-medium">{search.totalResults || search.totalMatches || 0} matches</span>
+                                                                            <Users className="h-4 w-4 text-muted-foreground" />
+                                                                            <span className="text-foreground font-medium">{search.totalResults || search.totalMatches || 0} matches</span>
                                                                         </div>
                                                                     )}
                                                                     {search.shortlistedCount !== undefined && (
@@ -909,7 +911,7 @@ const RecruiterDashboard = () => {
 
                                                                 {/* Action Buttons - Only show if there are matches */}
                                                                 {(search.totalResults || search.totalMatches || 0) > 0 && (
-                                                                    <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                                                                    <div className="flex justify-end gap-3 pt-4 border-t border-border">
                                                                         <Button
                                                                             variant="outline"
                                                                             size="sm"
@@ -918,7 +920,7 @@ const RecruiterDashboard = () => {
                                                                                 if (id) handleViewAll(id, e);
                                                                             }}
                                                                             disabled={!search.totalResults && !search.totalMatches || (search.totalResults || search.totalMatches || 0) === 0}
-                                                                            className={`${expandedPastSearches[search.searchId || search.id || '']?.filterType === 'all' ? 'bg-gray-50' : ''}`}
+                                                                            className={`${expandedPastSearches[search.searchId || search.id || '']?.filterType === 'all' ? 'bg-muted' : ''}`}
                                                                         >
                                                                             <Play className="h-4 w-4 mr-2" />
                                                                             {expandedPastSearches[search.searchId || search.id || '']?.filterType === 'all' ? 'Hide All' : 'View All'}
@@ -930,7 +932,7 @@ const RecruiterDashboard = () => {
                                                                                 const id = search.searchId || search.id;
                                                                                 if (id) handleViewShortlisted(id, e);
                                                                             }}
-                                                                            className={`border-green-200 text-green-700 hover:bg-green-50 ${expandedPastSearches[search.searchId || search.id || '']?.filterType === 'shortlisted' ? 'bg-green-50' : ''}`}
+                                                                            className={`border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-950 ${expandedPastSearches[search.searchId || search.id || '']?.filterType === 'shortlisted' ? 'bg-green-50 dark:bg-green-950' : ''}`}
                                                                             disabled={!search.shortlistedCount || search.shortlistedCount === 0}
                                                                         >
                                                                             <CheckCircle className="h-4 w-4 mr-2" />
@@ -943,7 +945,7 @@ const RecruiterDashboard = () => {
                                                                                 const id = search.searchId || search.id;
                                                                                 if (id) handleViewRejected(id, e);
                                                                             }}
-                                                                            className={`border-red-200 text-red-700 hover:bg-red-50 ${expandedPastSearches[search.searchId || search.id || '']?.filterType === 'rejected' ? 'bg-red-50' : ''}`}
+                                                                            className={`border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950 ${expandedPastSearches[search.searchId || search.id || '']?.filterType === 'rejected' ? 'bg-red-50 dark:bg-red-950' : ''}`}
                                                                             disabled={!search.rejectedCount || search.rejectedCount === 0}
                                                                         >
                                                                             <XCircle className="h-4 w-4 mr-2" />
@@ -954,14 +956,14 @@ const RecruiterDashboard = () => {
 
                                                                 {/* Expanded Profiles Section - Inside Card */}
                                                                 {expandedPastSearches[search.searchId || search.id || ''] && (
-                                                                    <div className="mt-6 pt-6 border-t border-gray-200 space-y-4">
+                                                                    <div className="mt-6 pt-6 border-t border-border space-y-4">
                                                                         {expandedPastSearches[search.searchId || search.id || '']?.isLoading ? (
                                                                             <div className="flex items-center justify-center py-8">
-                                                                                <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
-                                                                                <span className="ml-2 text-gray-500">Loading profiles...</span>
+                                                                                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                                                                                <span className="ml-2 text-muted-foreground">Loading profiles...</span>
                                                                             </div>
                                                                         ) : expandedPastSearches[search.searchId || search.id || '']?.profiles.length === 0 ? (
-                                                                            <div className="text-center py-8 text-gray-500">
+                                                                            <div className="text-center py-8 text-muted-foreground">
                                                                                 No {expandedPastSearches[search.searchId || search.id || '']?.filterType} profiles found.
                                                                             </div>
                                                                         ) : (
@@ -1041,16 +1043,16 @@ const RecruiterDashboard = () => {
                 ) : (
                     <>
                         <div className="space-y-6">
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-start gap-4">
                                 <div className="flex-1">
                                     <SearchBox onSearch={handleSearch} />
                                 </div>
                                 <Button
                                     variant="outline"
                                     onClick={handleOpenPastSearches}
-                                    className="ml-4 gap-2"
+                                    className="gap-2 py-6 px-6 text-base whitespace-nowrap flex-shrink-0 shadow-lg border-border hover:border-primary/30 hover:bg-accent transition-all"
                                 >
-                                    <History className="h-4 w-4" />
+                                    <History className="h-5 w-5" />
                                     {isPastSearchesOpen ? 'Hide' : 'Show'} Past Searches
                                 </Button>
                             </div>
@@ -1058,49 +1060,51 @@ const RecruiterDashboard = () => {
                             {/* Past Searches Cards */}
                             {isPastSearchesOpen && (
                                 <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <History className="h-4 w-4 text-muted-foreground" />
+                                        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Search History</h2>
+                                    </div>
                                     {isLoadingPastSearches ? (
                                         <div className="flex justify-center py-8">
-                                            <Loader2 className="h-6 w-6 animate-spin text-purple-600" />
+                                            <Loader2 className="h-6 w-6 animate-spin text-primary" />
                                         </div>
                                     ) : pastSearches.length === 0 ? (
-                                        <div className="text-center py-8 text-gray-500 bg-white rounded-lg border border-gray-200">
-                                            <History className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                                        <div className="text-center py-8 text-muted-foreground bg-card rounded-lg border border-border">
+                                            <History className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
                                             <p>No past searches found</p>
                                         </div>
                                     ) : (
-                                        <div className="space-y-4">
+                                        <div className="space-y-6">
                                             {pastSearches.map((search) => (
                                                 <React.Fragment key={search.id || search.searchId}>
                                                     <Card
-                                                        className="hover:shadow-lg transition-all border-gray-200"
+                                                        className="hover:shadow-lg transition-all border-2 border-border bg-card"
                                                     >
-                                                        <CardContent className="p-5">
+                                                        <CardContent className="p-6">
                                                             <div className="space-y-4">
                                                                 {/* Header Section */}
                                                                 <div className="flex items-start gap-4">
-                                                                    <div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                                                                        <span className="text-purple-700 font-bold text-sm">
-                                                                            {(search.searchText || search.query) ? (search.searchText || search.query)!.charAt(0).toUpperCase() : 'S'}
-                                                                        </span>
+                                                                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                                                        <History className="h-4 w-4 text-primary" />
                                                                     </div>
                                                                     <div className="flex-1 min-w-0">
                                                                         {(search.searchText || search.query) && (
-                                                                            <h3 className="text-lg font-medium text-gray-900 mb-1">
+                                                                            <h3 className="text-lg font-medium text-foreground mb-1">
                                                                                 {search.searchText || search.query}
                                                                             </h3>
                                                                         )}
-                                                                        <p className="text-sm text-gray-500">
+                                                                        <p className="text-sm text-muted-foreground">
                                                                             Do these filters look good? ({search.totalResults || search.totalMatches || 0} matches)
                                                                         </p>
                                                                         {(search.createdAt || search.updatedAt) && (
-                                                                            <p className="text-xs text-gray-400 mt-1">
+                                                                            <p className="text-xs text-muted-foreground/70 mt-1">
                                                                                 {formatDate(search.createdAt || search.updatedAt)}
                                                                             </p>
                                                                         )}
                                                                     </div>
                                                                     <div className="flex items-center gap-2">
                                                                         {isLoadingSearchDetails && (selectedSearchDetails?.searchId === (search.searchId || search.id) || selectedSearchDetails?.id === (search.searchId || search.id)) && (
-                                                                            <Loader2 className="h-5 w-5 animate-spin text-purple-600 flex-shrink-0" />
+                                                                            <Loader2 className="h-5 w-5 animate-spin text-primary flex-shrink-0" />
                                                                         )}
                                                                         <Button
                                                                             variant="ghost"
@@ -1114,9 +1118,9 @@ const RecruiterDashboard = () => {
                                                                             title="Refresh search"
                                                                         >
                                                                             {refreshingSearchId === (search.searchId || search.id) ? (
-                                                                                <Loader2 className="h-4 w-4 animate-spin text-purple-600" />
+                                                                                <Loader2 className="h-4 w-4 animate-spin text-primary" />
                                                                             ) : (
-                                                                                <RefreshCw className="h-4 w-4 text-gray-500 hover:text-purple-600" />
+                                                                                <RefreshCw className="h-4 w-4 text-muted-foreground hover:text-primary" />
                                                                             )}
                                                                         </Button>
                                                                     </div>
@@ -1126,8 +1130,8 @@ const RecruiterDashboard = () => {
                                                                 <div className="flex items-center gap-6 text-sm">
                                                                     {(search.totalResults !== undefined || search.totalMatches !== undefined) && (
                                                                         <div className="flex items-center gap-2">
-                                                                            <Users className="h-4 w-4 text-gray-500" />
-                                                                            <span className="text-gray-700 font-medium">{search.totalResults || search.totalMatches || 0} matches</span>
+                                                                            <Users className="h-4 w-4 text-muted-foreground" />
+                                                                            <span className="text-foreground font-medium">{search.totalResults || search.totalMatches || 0} matches</span>
                                                                         </div>
                                                                     )}
                                                                     {search.shortlistedCount !== undefined && (
@@ -1146,7 +1150,7 @@ const RecruiterDashboard = () => {
 
                                                                 {/* Action Buttons - Only show if there are matches */}
                                                                 {(search.totalResults || search.totalMatches || 0) > 0 && (
-                                                                    <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                                                                    <div className="flex justify-end gap-3 pt-4 border-t border-border">
                                                                         <Button
                                                                             variant="outline"
                                                                             size="sm"
@@ -1155,7 +1159,7 @@ const RecruiterDashboard = () => {
                                                                                 if (id) handleViewAll(id, e);
                                                                             }}
                                                                             disabled={!search.totalResults && !search.totalMatches || (search.totalResults || search.totalMatches || 0) === 0}
-                                                                            className={`${expandedPastSearches[search.searchId || search.id || '']?.filterType === 'all' ? 'bg-gray-50' : ''}`}
+                                                                            className={`${expandedPastSearches[search.searchId || search.id || '']?.filterType === 'all' ? 'bg-muted' : ''}`}
                                                                         >
                                                                             <Play className="h-4 w-4 mr-2" />
                                                                             {expandedPastSearches[search.searchId || search.id || '']?.filterType === 'all' ? 'Hide All' : 'View All'}
@@ -1167,7 +1171,7 @@ const RecruiterDashboard = () => {
                                                                                 const id = search.searchId || search.id;
                                                                                 if (id) handleViewShortlisted(id, e);
                                                                             }}
-                                                                            className={`border-green-200 text-green-700 hover:bg-green-50 ${expandedPastSearches[search.searchId || search.id || '']?.filterType === 'shortlisted' ? 'bg-green-50' : ''}`}
+                                                                            className={`border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-950 ${expandedPastSearches[search.searchId || search.id || '']?.filterType === 'shortlisted' ? 'bg-green-50 dark:bg-green-950' : ''}`}
                                                                             disabled={!search.shortlistedCount || search.shortlistedCount === 0}
                                                                         >
                                                                             <CheckCircle className="h-4 w-4 mr-2" />
@@ -1180,7 +1184,7 @@ const RecruiterDashboard = () => {
                                                                                 const id = search.searchId || search.id;
                                                                                 if (id) handleViewRejected(id, e);
                                                                             }}
-                                                                            className={`border-red-200 text-red-700 hover:bg-red-50 ${expandedPastSearches[search.searchId || search.id || '']?.filterType === 'rejected' ? 'bg-red-50' : ''}`}
+                                                                            className={`border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950 ${expandedPastSearches[search.searchId || search.id || '']?.filterType === 'rejected' ? 'bg-red-50 dark:bg-red-950' : ''}`}
                                                                             disabled={!search.rejectedCount || search.rejectedCount === 0}
                                                                         >
                                                                             <XCircle className="h-4 w-4 mr-2" />
@@ -1191,14 +1195,14 @@ const RecruiterDashboard = () => {
 
                                                                 {/* Expanded Profiles Section - Inside Card */}
                                                                 {expandedPastSearches[search.searchId || search.id || ''] && (
-                                                                    <div className="mt-6 pt-6 border-t border-gray-200 space-y-4">
+                                                                    <div className="mt-6 pt-6 border-t border-border space-y-4">
                                                                         {expandedPastSearches[search.searchId || search.id || '']?.isLoading ? (
                                                                             <div className="flex items-center justify-center py-8">
-                                                                                <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
-                                                                                <span className="ml-2 text-gray-500">Loading profiles...</span>
+                                                                                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                                                                                <span className="ml-2 text-muted-foreground">Loading profiles...</span>
                                                                             </div>
                                                                         ) : expandedPastSearches[search.searchId || search.id || '']?.profiles.length === 0 ? (
-                                                                            <div className="text-center py-8 text-gray-500">
+                                                                            <div className="text-center py-8 text-muted-foreground">
                                                                                 No {expandedPastSearches[search.searchId || search.id || '']?.filterType} profiles found.
                                                                             </div>
                                                                         ) : (
@@ -1286,10 +1290,15 @@ const RecruiterDashboard = () => {
                         {/* Search Results - List Format */}
                         {isSearching ? (
                             <div className="flex justify-center py-12">
-                                <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+                                <Loader2 className="h-8 w-8 animate-spin text-primary" />
                             </div>
                         ) : searchResults.length > 0 ? (
-                            <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-2">
+                                    <Users className="h-4 w-4 text-muted-foreground" />
+                                    <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Candidate Results</h2>
+                                </div>
+                                <div className="bg-card rounded-lg border border-border shadow-sm">
                                 <ResultsHeader
                                     totalCount={matchCount}
                                     currentPage={currentPage}
@@ -1377,10 +1386,11 @@ const RecruiterDashboard = () => {
                                             />
                                         );
                                     })}
+                                        </div>
                                 </div>
                             </div>
                         ) : hasSearched && !isSearching ? (
-                            <div className="text-center py-12 text-gray-500">
+                            <div className="text-center py-12 text-muted-foreground">
                                 <p>No candidates found. Try adjusting your search query.</p>
                             </div>
                         ) : null}

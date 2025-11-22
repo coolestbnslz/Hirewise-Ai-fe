@@ -175,7 +175,7 @@ const JobDetailPage = () => {
                             View Public Page
                         </Link>
                     </Button>
-                    <Button>Publish Job</Button>
+                    <Button className="bg-black dark:bg-gray-800 hover:bg-black/90 dark:hover:bg-gray-700 text-white">Publish Job</Button>
                 </div>
             </div>
 
@@ -238,15 +238,15 @@ const JobDetailPage = () => {
                         </CardHeader>
                         <CardContent>
                             {/* Tabs */}
-                            <div className="border-b border-gray-200 mb-6">
+                            <div className="border-b border-border mb-6">
                                 <div className="flex gap-6">
                                     <button
                                         onClick={() => setActiveTab('all')}
                                         className={`
                                             py-3 text-sm font-medium border-b-2 transition-colors
                                             ${activeTab === 'all'
-                                                ? 'border-purple-600 text-purple-600'
-                                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}
+                                                ? 'border-primary text-primary'
+                                                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'}
                                         `}
                                     >
                                         All
@@ -256,8 +256,8 @@ const JobDetailPage = () => {
                                         className={`
                                             py-3 text-sm font-medium border-b-2 transition-colors
                                             ${activeTab === 'approved'
-                                                ? 'border-purple-600 text-purple-600'
-                                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}
+                                                ? 'border-primary text-primary'
+                                                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'}
                                         `}
                                     >
                                         Approved
@@ -267,8 +267,8 @@ const JobDetailPage = () => {
                                         className={`
                                             py-3 text-sm font-medium border-b-2 transition-colors
                                             ${activeTab === 'rejected'
-                                                ? 'border-purple-600 text-purple-600'
-                                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}
+                                                ? 'border-primary text-primary'
+                                                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'}
                                         `}
                                     >
                                         Rejected
@@ -278,8 +278,8 @@ const JobDetailPage = () => {
                                         className={`
                                             py-3 text-sm font-medium border-b-2 transition-colors
                                             ${activeTab === 'pending'
-                                                ? 'border-purple-600 text-purple-600'
-                                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}
+                                                ? 'border-primary text-primary'
+                                                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'}
                                         `}
                                     >
                                         Pending

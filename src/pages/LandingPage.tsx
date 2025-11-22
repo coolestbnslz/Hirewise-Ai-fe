@@ -2,14 +2,17 @@ import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/Card';
 import { Briefcase, Users, Search, ArrowRight, CheckCircle2, Zap, Shield } from 'lucide-react';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 const LandingPage = () => {
     return (
         <div className="min-h-screen bg-background flex flex-col animate-in fade-in duration-500">
+            <ThemeToggle />
+
             {/* Hero Section */}
             <header className="px-6 py-12 md:py-24 lg:py-32 text-center space-y-8 bg-gradient-to-b from-background to-accent/20">
                 <div className="space-y-4 max-w-3xl mx-auto">
-                    <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-600">
+                    <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-black to-purple-600 dark:from-white dark:to-purple-400">
                         HireWiseAI
                     </h1>
                     <p className="text-xl md:text-2xl text-muted-foreground">
@@ -17,7 +20,7 @@ const LandingPage = () => {
                     </p>
                 </div>
                 <div className="flex flex-wrap justify-center gap-4">
-                    <Button size="lg" asChild>
+                    <Button size="lg" asChild className="bg-black dark:bg-gray-800 hover:bg-black/90 dark:hover:bg-gray-700 text-white">
                         <Link to="/hr/create">Post a Job</Link>
                     </Button>
                     <Button size="lg" variant="outline" asChild>
@@ -31,10 +34,10 @@ const LandingPage = () => {
                 <h2 className="text-3xl font-bold text-center">Choose Your Path</h2>
                 <div className="grid gap-8 md:grid-cols-3">
                     {/* HR Card */}
-                    <Card className="hover:shadow-lg transition-shadow border-primary/20">
+                    <Card className="hover:shadow-lg transition-shadow border-border">
                         <CardHeader>
-                            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                                <Briefcase className="h-6 w-6 text-primary" />
+                            <div className="w-12 h-12 bg-gradient-to-r from-black/10 to-purple-600/10 rounded-full flex items-center justify-center mb-4">
+                                <Briefcase className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                             </div>
                             <CardTitle>For HR Managers</CardTitle>
                             <CardDescription>Create perfect job descriptions with AI assistance.</CardDescription>
@@ -45,7 +48,7 @@ const LandingPage = () => {
                                 <li className="flex items-center"><CheckCircle2 className="h-4 w-4 mr-2 text-green-500" /> Smart clarification</li>
                                 <li className="flex items-center"><CheckCircle2 className="h-4 w-4 mr-2 text-green-500" /> Instant publishing</li>
                             </ul>
-                            <Button className="w-full" asChild>
+                            <Button className="w-full bg-black dark:bg-gray-800 hover:bg-black/90 dark:hover:bg-gray-700 text-white" asChild>
                                 <Link to="/hr/create">Create Job <ArrowRight className="ml-2 h-4 w-4" /></Link>
                             </Button>
                         </CardContent>

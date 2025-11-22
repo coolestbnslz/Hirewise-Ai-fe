@@ -4,6 +4,7 @@ import { jobsApi, type Job } from '../../api/jobs';
 import { Button } from '../../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
 import { Loader2, ArrowRight } from 'lucide-react';
+import { ThemeToggle } from '../../components/ThemeToggle';
 
 const AgentPage = () => {
     const { jobId } = useParams<{ jobId: string }>();
@@ -30,6 +31,7 @@ const AgentPage = () => {
 
     return (
         <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 animate-in fade-in duration-500">
+            <ThemeToggle />
             <div className="max-w-2xl w-full space-y-8">
                 <div className="text-center space-y-4">
                     <h1 className="text-4xl font-bold tracking-tight">{job.role}</h1>
@@ -49,7 +51,7 @@ const AgentPage = () => {
                             <h3 className="font-semibold">Requirements</h3>
                             <div className="flex flex-wrap gap-2">
                                 {job.must_have_skills.map((skill) => (
-                                    <span key={skill} className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary/10 text-primary hover:bg-primary/20">
+                                    <span key={skill} className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-muted text-foreground hover:bg-muted/80">
                                         {skill}
                                     </span>
                                 ))}
@@ -59,7 +61,7 @@ const AgentPage = () => {
                 </Card>
 
                 <div className="flex justify-center">
-                    <Button size="lg" className="w-full md:w-auto px-8" asChild>
+                    <Button size="lg" className="w-full md:w-auto px-8 bg-black dark:bg-gray-800 hover:bg-black/90 dark:hover:bg-gray-700 text-white" asChild>
                         <Link to={`/agent/${job.id}/apply`}>
                             Apply Now <ArrowRight className="ml-2 h-4 w-4" />
                         </Link>

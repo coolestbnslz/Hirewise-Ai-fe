@@ -84,12 +84,12 @@ export const SearchBox = ({ onSearch }: SearchBoxProps) => {
         <div className="relative w-full max-w-3xl mx-auto" ref={containerRef}>
             <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Sparkles className="h-5 w-5 text-purple-500" />
+                    <Sparkles className="h-5 w-5 text-primary" />
                 </div>
                 <form onSubmit={handleSubmit}>
                     <Input
                         type="text"
-                        className="pl-10 pr-12 py-6 text-lg shadow-lg border-purple-100 focus-visible:ring-purple-500 transition-all"
+                        className="pl-10 pr-12 py-6 text-lg shadow-lg border-primary/20 dark:border-primary/30 focus-visible:ring-primary transition-all"
                         placeholder="Who are you looking for?"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
@@ -99,7 +99,7 @@ export const SearchBox = ({ onSearch }: SearchBoxProps) => {
                         <Button
                             size="sm"
                             type="submit"
-                            className="h-8 w-8 p-0 rounded-full bg-purple-100 hover:bg-purple-200 text-purple-700"
+                            className="h-8 w-8 p-0 rounded-full bg-primary/10 dark:bg-primary/20 hover:bg-primary/20 dark:hover:bg-primary/30 text-primary"
                         >
                             <ArrowRight className="h-4 w-4" />
                         </Button>
@@ -113,34 +113,34 @@ export const SearchBox = ({ onSearch }: SearchBoxProps) => {
                     <div
                         key={index}
                         className={`flex items-center px-3 py-1.5 rounded-full text-sm border transition-colors duration-300 ${tag.containsCriteria
-                            ? 'bg-green-50 border-green-200 text-green-700'
-                            : 'bg-white border-gray-200 text-gray-400'
+                            ? 'bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800 text-green-700 dark:text-green-400'
+                            : 'bg-card border-border text-muted-foreground'
                             }`}
                     >
-                        <Check className={`h-3.5 w-3.5 mr-1.5 ${tag.containsCriteria ? 'text-green-600' : 'text-gray-300'}`} />
+                        <Check className={`h-3.5 w-3.5 mr-1.5 ${tag.containsCriteria ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground/50'}`} />
                         {tag.label}
                     </div>
                 ))}
             </div>
 
             {isOpen && (
-                <div className="absolute z-10 w-full mt-2 bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="absolute z-10 w-full mt-2 bg-card rounded-lg shadow-xl border border-border overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                     <div className="py-2">
-                        <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        <div className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                             Suggestions
                         </div>
                         {SUGGESTIONS.map((suggestion, index) => (
                             <button
                                 key={index}
-                                className="w-full text-left px-4 py-3 hover:bg-purple-50 transition-colors flex items-center group"
+                                className="w-full text-left px-4 py-3 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors flex items-center group"
                                 onClick={() => {
                                     setQuery(suggestion);
                                     onSearch(suggestion);
                                     setIsOpen(false);
                                 }}
                             >
-                                <Search className="h-4 w-4 text-gray-400 mr-3 group-hover:text-purple-500" />
-                                <span className="text-gray-700 group-hover:text-gray-900">{suggestion}</span>
+                                <Search className="h-4 w-4 text-muted-foreground mr-3 group-hover:text-primary" />
+                                <span className="text-foreground group-hover:text-primary">{suggestion}</span>
                             </button>
                         ))}
                     </div>

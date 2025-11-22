@@ -23,21 +23,21 @@ export const ResultsHeader = ({
     const totalPages = Math.ceil(totalCount / pageSize);
 
     return (
-        <div className="flex items-center justify-between py-4 px-6 border-b border-gray-200 bg-white">
+        <div className="flex items-center justify-between py-4 px-6 border-b border-border bg-card">
             <div className="flex items-center gap-3">
                 <input
                     type="checkbox"
                     checked={isAllSelected}
                     onChange={(e) => onSelectAll(e.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                    className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
                 />
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm font-medium text-foreground">
                     All Profiles ({totalCount})
                 </span>
             </div>
 
             <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-muted-foreground">
                     {startIndex} - {endIndex} of {totalCount}
                 </span>
                 <Button

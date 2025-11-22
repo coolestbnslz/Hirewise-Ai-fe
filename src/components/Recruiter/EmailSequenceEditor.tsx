@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import {
     ChevronLeft, Plus, Mail, Phone,
     Bold, Italic, Underline, List, Link as LinkIcon,
-    MoreHorizontal, ChevronDown, AlertTriangle, Play,
+    MoreHorizontal, ChevronDown, Play,
     Wand2, Code
 } from 'lucide-react';
 import { Button } from '../ui/Button';
@@ -112,25 +112,25 @@ export const EmailSequenceEditor: React.FC<EmailSequenceEditorProps> = ({
     ];
 
     return createPortal(
-        <div className="fixed inset-0 z-[60] bg-white flex flex-col">
+        <div className="fixed inset-0 z-[60] bg-background flex flex-col">
             {/* Header */}
-            <div className="h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white">
+            <div className="h-16 border-b border-border flex items-center justify-between px-6 bg-card">
                 <div className="flex items-center gap-4">
-                    <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                        <ChevronLeft className="h-5 w-5 text-gray-500" />
+                    <button onClick={onClose} className="p-2 hover:bg-muted rounded-full transition-colors">
+                        <ChevronLeft className="h-5 w-5 text-muted-foreground" />
                     </button>
                     <div>
-                        <h1 className="text-lg font-semibold text-gray-900">Edit Sequence</h1>
-                        <p className="text-xs text-gray-500">Created by Anish Bansal on Nov 21st, 2025</p>
+                        <h1 className="text-lg font-semibold text-foreground">Edit Sequence</h1>
+                        <p className="text-xs text-muted-foreground">Created by Anish Bansal on Nov 21st, 2025</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Button variant="outline" size="sm" className="text-gray-600">
+                    <Button variant="outline" size="sm" className="text-muted-foreground">
                         Save Draft
                     </Button>
                     <Button
                         size="sm"
-                        className="bg-purple-600 hover:bg-purple-700 text-white"
+                        className="bg-primary hover:bg-primary/90 text-white"
                         onClick={handleStartSequence}
                     >
                         Start Sequence
@@ -140,10 +140,10 @@ export const EmailSequenceEditor: React.FC<EmailSequenceEditorProps> = ({
 
             <div className="flex-1 flex overflow-hidden">
                 {/* Sidebar */}
-                <div className="w-64 border-r border-gray-200 bg-gray-50 flex flex-col">
-                    <div className="p-4 border-b border-gray-200">
-                        <h2 className="font-semibold text-gray-900">Steps ({steps.length})</h2>
-                        <p className="text-xs text-gray-500 mt-1">We recommend having 3+ steps.</p>
+                <div className="w-64 border-r border-border bg-muted flex flex-col">
+                    <div className="p-4 border-b border-border">
+                        <h2 className="font-semibold text-foreground">Steps ({steps.length})</h2>
+                        <p className="text-xs text-muted-foreground mt-1">We recommend having 3+ steps.</p>
                     </div>
 
                     <div className="flex-1 overflow-y-auto p-4 space-y-3">
@@ -151,26 +151,26 @@ export const EmailSequenceEditor: React.FC<EmailSequenceEditorProps> = ({
                             <div
                                 key={step.id}
                                 className={`p-3 rounded-lg border cursor-pointer transition-all ${activeStepId === step.id
-                                    ? 'bg-purple-50 border-purple-200 shadow-sm'
-                                    : 'bg-white border-gray-200 hover:border-purple-200'
+                                    ? 'bg-primary/10 dark:bg-primary/20 border-primary/20 dark:border-primary/30 shadow-sm'
+                                    : 'bg-card border-border hover:border-primary/30'
                                     }`}
                                 onClick={() => setActiveStepId(step.id)}
                             >
                                 <div className="flex items-center gap-2 mb-1">
-                                    <span className={`text-xs font-medium px-1.5 py-0.5 rounded ${activeStepId === step.id ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'
+                                    <span className={`text-xs font-medium px-1.5 py-0.5 rounded ${activeStepId === step.id ? 'bg-primary/20 dark:bg-primary/30 text-primary' : 'bg-muted text-muted-foreground'
                                         }`}>
                                         Step {step.id}
                                     </span>
-                                    <span className="text-sm font-medium text-gray-900">{step.type}</span>
+                                    <span className="text-sm font-medium text-foreground">{step.type}</span>
                                 </div>
-                                <p className="text-xs text-gray-500">Nov 21, 3:47 PM (+0530)</p>
+                                <p className="text-xs text-muted-foreground">Nov 21, 3:47 PM (+0530)</p>
                             </div>
                         ))}
                     </div>
 
-                    <div className="p-4 border-t border-gray-200 relative">
+                    <div className="p-4 border-t border-border relative">
                         <Button
-                            className="w-full bg-purple-600 hover:bg-purple-700 text-white gap-2"
+                            className="w-full bg-primary hover:bg-primary/90 text-white gap-2"
                             onClick={() => setIsAddStepOpen(!isAddStepOpen)}
                         >
                             <Plus className="h-4 w-4" />
@@ -178,19 +178,19 @@ export const EmailSequenceEditor: React.FC<EmailSequenceEditorProps> = ({
                         </Button>
 
                         {isAddStepOpen && (
-                            <div className="absolute bottom-full left-4 right-4 mb-2 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden z-10">
+                            <div className="absolute bottom-full left-4 right-4 mb-2 bg-card rounded-lg shadow-xl border border-border overflow-hidden z-10">
                                 <button
-                                    className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3 text-sm font-medium text-gray-700"
+                                    className="w-full text-left px-4 py-3 hover:bg-accent flex items-center gap-3 text-sm font-medium text-foreground"
                                     onClick={() => addStep('Email')}
                                 >
-                                    <Mail className="h-4 w-4 text-blue-500" />
+                                    <Mail className="h-4 w-4 text-blue-500 dark:text-blue-400" />
                                     Email
                                 </button>
                                 <button
-                                    className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3 text-sm font-medium text-gray-700 border-t border-gray-100"
+                                    className="w-full text-left px-4 py-3 hover:bg-accent flex items-center gap-3 text-sm font-medium text-foreground border-t border-border"
                                     onClick={() => addStep('Call')}
                                 >
-                                    <Phone className="h-4 w-4 text-green-500" />
+                                    <Phone className="h-4 w-4 text-green-500 dark:text-green-400" />
                                     Call
                                 </button>
                             </div>
@@ -199,35 +199,24 @@ export const EmailSequenceEditor: React.FC<EmailSequenceEditorProps> = ({
                 </div>
 
                 {/* Main Content */}
-                <div className="flex-1 overflow-y-auto bg-gray-50/50 p-8">
+                <div className="flex-1 overflow-y-auto bg-muted/50 p-8">
                     <div className="max-w-4xl mx-auto">
-                        {/* Warning Alert */}
-                        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6 flex items-start gap-3">
-                            <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                            <div>
-                                <h3 className="text-sm font-medium text-amber-800">Resolve the following issues</h3>
-                                <p className="text-sm text-amber-700 mt-1">
-                                    There is no sender email address specified. Please select or <a href="#" className="underline font-medium">connect an email account</a> to start sending emails.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
                             {/* Editor Header */}
-                            <div className="p-6 border-b border-gray-200 space-y-6">
+                            <div className="p-6 border-b border-border space-y-6">
                                 <div className="flex items-center gap-4">
-                                    <span className="bg-purple-100 text-purple-700 text-xs font-bold px-2 py-1 rounded uppercase tracking-wide">
+                                    <span className="bg-primary/10 dark:bg-primary/20 text-primary text-xs font-bold px-2 py-1 rounded uppercase tracking-wide">
                                         Step {activeStep.id}
                                     </span>
                                     <div className="relative group">
-                                        <button className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                        <button className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-border text-sm font-medium text-foreground hover:bg-accent">
                                             {activeStep.type === 'Email' ? (
-                                                <Mail className="h-4 w-4 text-blue-500" />
+                                                <Mail className="h-4 w-4 text-blue-500 dark:text-blue-400" />
                                             ) : (
-                                                <Phone className="h-4 w-4 text-green-500" />
+                                                <Phone className="h-4 w-4 text-green-500 dark:text-green-400" />
                                             )}
                                             {activeStep.type}
-                                            <ChevronDown className="h-3 w-3 text-gray-400" />
+                                            <ChevronDown className="h-3 w-3 text-muted-foreground" />
                                         </button>
                                     </div>
                                 </div>
@@ -239,35 +228,35 @@ export const EmailSequenceEditor: React.FC<EmailSequenceEditorProps> = ({
                                         <div className="space-y-4">
 
 
-                                            <div className="grid grid-cols-[80px_1fr] gap-4 items-center">
-                                                <label className="text-sm font-semibold text-gray-900">Subject</label>
-                                                <div className="relative">
+                                            <div className="flex items-center gap-4">
+                                                <label className="text-sm font-semibold text-foreground w-20 flex-shrink-0">Subject</label>
+                                                <div className="relative flex-1">
                                                     <input
                                                         type="text"
                                                         value={subject}
                                                         onChange={(e) => setSubject(e.target.value)}
-                                                        className="w-full text-sm border-gray-300 rounded-md py-2 pr-16 focus:ring-purple-500 focus:border-purple-500"
+                                                        className="w-full text-sm border border-input bg-background rounded-md px-3 py-2 pr-16 focus:ring-2 focus:ring-primary focus:border-primary text-foreground"
                                                     />
-                                                    <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2 text-xs text-gray-500">
-                                                        <button className="hover:text-gray-900">Cc</button>
-                                                        <button className="hover:text-gray-900">Bcc</button>
+                                                    <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2 text-xs text-muted-foreground">
+                                                        <button className="hover:text-foreground">Cc</button>
+                                                        <button className="hover:text-foreground">Bcc</button>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div>
-                                            <label className="text-sm font-semibold text-gray-900 block mb-3">Variables</label>
+                                            <label className="text-sm font-semibold text-foreground block mb-3">Variables</label>
                                             <div className="flex flex-wrap gap-2 items-center">
-                                                <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white gap-2 h-8">
+                                                <Button size="sm" className="bg-primary hover:bg-primary/90 text-white gap-2 h-8">
                                                     <Play className="h-3 w-3 fill-current" />
                                                     Preview and Test
                                                 </Button>
-                                                <Button variant="outline" size="sm" className="gap-2 h-8 bg-purple-50 text-purple-700 border-purple-100 hover:bg-purple-100">
+                                                <Button variant="outline" size="sm" className="gap-2 h-8 bg-primary/10 dark:bg-primary/20 text-primary border-primary/20 dark:border-primary/30 hover:bg-primary/20 dark:hover:bg-primary/30">
                                                     <Wand2 className="h-3 w-3" />
                                                     AI Command
                                                 </Button>
-                                                <Button variant="outline" size="sm" className="gap-2 h-8 bg-purple-50 text-purple-700 border-purple-100 hover:bg-purple-100">
+                                                <Button variant="outline" size="sm" className="gap-2 h-8 bg-primary/10 dark:bg-primary/20 text-primary border-primary/20 dark:border-primary/30 hover:bg-primary/20 dark:hover:bg-primary/30">
                                                     <Code className="h-3 w-3" />
                                                     Snippets
                                                 </Button>
@@ -276,7 +265,7 @@ export const EmailSequenceEditor: React.FC<EmailSequenceEditorProps> = ({
                                                 {variables.map((variable) => (
                                                     <button
                                                         key={variable}
-                                                        className="px-2 py-1 rounded bg-purple-50 text-purple-700 text-xs font-medium hover:bg-purple-100 transition-colors"
+                                                        className="px-2 py-1 rounded bg-primary/10 dark:bg-primary/20 text-primary text-xs font-medium hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors"
                                                     >
                                                         {variable}
                                                     </button>
@@ -286,10 +275,10 @@ export const EmailSequenceEditor: React.FC<EmailSequenceEditorProps> = ({
                                     </>
                                 ) : (
                                     <div className="space-y-4">
-                                        <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 text-sm text-blue-800">
+                                        <div className="bg-blue-50 dark:bg-blue-950 border border-blue-100 dark:border-blue-800 rounded-lg p-4 text-sm text-blue-800 dark:text-blue-300">
                                             <p className="font-medium">Call Task</p>
                                             <p className="mt-1">This step will create a task for you to call the candidate.</p>
-                                            <p className="mt-2 text-xs text-blue-600 font-medium flex items-center gap-1">
+                                            <p className="mt-2 text-xs text-blue-600 dark:text-blue-400 font-medium flex items-center gap-1">
                                                 <Wand2 className="h-3 w-3" />
                                                 AI-based call summary is available once scheduled call is completed.
                                             </p>
@@ -302,50 +291,50 @@ export const EmailSequenceEditor: React.FC<EmailSequenceEditorProps> = ({
                             {activeStep.type === 'Email' ? (
                                 <>
                                     {/* Editor Toolbar */}
-                                    <div className="border-b border-gray-200 p-2 flex items-center gap-1 bg-gray-50">
-                                        <button className="p-1.5 rounded hover:bg-gray-200 text-gray-600">
+                                    <div className="border-b border-border p-2 flex items-center gap-1 bg-muted">
+                                        <button className="p-1.5 rounded hover:bg-accent text-muted-foreground">
                                             <ChevronLeft className="h-4 w-4" />
                                         </button>
-                                        <button className="p-1.5 rounded hover:bg-gray-200 text-gray-600">
+                                        <button className="p-1.5 rounded hover:bg-accent text-muted-foreground">
                                             <ChevronLeft className="h-4 w-4 rotate-180" />
                                         </button>
-                                        <div className="w-px h-4 bg-gray-300 mx-1" />
-                                        <button className="p-1.5 rounded hover:bg-gray-200 text-gray-600">
+                                        <div className="w-px h-4 bg-border mx-1" />
+                                        <button className="p-1.5 rounded hover:bg-accent text-muted-foreground">
                                             <Bold className="h-4 w-4" />
                                         </button>
-                                        <button className="p-1.5 rounded hover:bg-gray-200 text-gray-600">
+                                        <button className="p-1.5 rounded hover:bg-accent text-muted-foreground">
                                             <Italic className="h-4 w-4" />
                                         </button>
-                                        <button className="p-1.5 rounded hover:bg-gray-200 text-gray-600">
+                                        <button className="p-1.5 rounded hover:bg-accent text-muted-foreground">
                                             <Underline className="h-4 w-4" />
                                         </button>
-                                        <div className="w-px h-4 bg-gray-300 mx-1" />
-                                        <button className="p-1.5 rounded hover:bg-gray-200 text-gray-600">
+                                        <div className="w-px h-4 bg-border mx-1" />
+                                        <button className="p-1.5 rounded hover:bg-accent text-muted-foreground">
                                             <List className="h-4 w-4" />
                                         </button>
-                                        <button className="p-1.5 rounded hover:bg-gray-200 text-gray-600">
+                                        <button className="p-1.5 rounded hover:bg-accent text-muted-foreground">
                                             <LinkIcon className="h-4 w-4" />
                                         </button>
-                                        <div className="w-px h-4 bg-gray-300 mx-1" />
-                                        <select className="bg-transparent text-sm text-gray-600 border-none focus:ring-0 cursor-pointer">
+                                        <div className="w-px h-4 bg-border mx-1" />
+                                        <select className="bg-transparent text-sm text-muted-foreground border-none focus:ring-0 cursor-pointer">
                                             <option>Arial</option>
                                             <option>Inter</option>
                                             <option>Roboto</option>
                                         </select>
-                                        <select className="bg-transparent text-sm text-gray-600 border-none focus:ring-0 cursor-pointer">
+                                        <select className="bg-transparent text-sm text-muted-foreground border-none focus:ring-0 cursor-pointer">
                                             <option>14px</option>
                                             <option>16px</option>
                                             <option>12px</option>
                                         </select>
                                         <div className="flex-1" />
-                                        <button className="p-1.5 rounded hover:bg-gray-200 text-gray-600">
+                                        <button className="p-1.5 rounded hover:bg-accent text-muted-foreground">
                                             <MoreHorizontal className="h-4 w-4" />
                                         </button>
                                     </div>
 
                                     <div className="p-6 min-h-[300px]">
                                         <textarea
-                                            className="w-full h-full min-h-[300px] resize-none border-none focus:ring-0 text-gray-700 text-base p-0"
+                                            className="w-full h-full min-h-[300px] resize-none border-none focus:ring-0 text-foreground text-base p-0 bg-transparent"
                                             placeholder="Start drafting a new email here..."
                                             value={activeStep.content}
                                             onChange={(e) => handleContentChange(e.target.value)}
@@ -356,7 +345,7 @@ export const EmailSequenceEditor: React.FC<EmailSequenceEditorProps> = ({
                                 <div className="p-6 min-h-[300px]">
 
                                     <textarea
-                                        className="w-full h-full min-h-[300px] resize-none border border-gray-200 rounded-lg p-4 focus:ring-purple-500 focus:border-purple-500 text-gray-700 text-base"
+                                        className="w-full h-full min-h-[300px] resize-none border border-input rounded-lg p-4 focus:ring-primary focus:border-primary text-foreground text-base bg-background"
                                         value={activeStep.content}
                                         onChange={(e) => handleContentChange(e.target.value)}
                                     />

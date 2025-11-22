@@ -59,18 +59,18 @@ export const Drawer: React.FC<DrawerProps> = ({
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
                         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                        className={`fixed inset-y-0 right-0 z-50 w-full ${width} bg-white shadow-2xl flex flex-col`}
+                        className={`fixed inset-y-0 right-0 z-50 w-full ${width} bg-card shadow-2xl flex flex-col`}
                     >
                         {/* Header */}
-                        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                            <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+                        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+                            <h2 className="text-lg font-semibold text-foreground">{title}</h2>
                             <Button
                                 variant="ghost"
                                 size="icon"
                                 onClick={onClose}
-                                className="rounded-full hover:bg-gray-100"
+                                className="rounded-full hover:bg-muted"
                             >
-                                <X className="h-5 w-5 text-gray-500" />
+                                <X className="h-5 w-5 text-muted-foreground" />
                             </Button>
                         </div>
 

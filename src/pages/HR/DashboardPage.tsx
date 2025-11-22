@@ -27,7 +27,7 @@ const DashboardPage = () => {
         <div className="space-y-6 animate-in fade-in duration-500">
             <div className="flex justify-between items-center">
                 <h1 className="text-3xl font-bold">HR Dashboard</h1>
-                <Button asChild>
+                <Button asChild className="bg-black dark:bg-gray-800 hover:bg-black/90 dark:hover:bg-gray-700 text-white">
                     <Link to="/hr/create">
                         <Plus className="mr-2 h-4 w-4" />
                         Post New Job

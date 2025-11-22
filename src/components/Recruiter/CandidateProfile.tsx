@@ -26,7 +26,7 @@ const highlightKeywords = (text: string, keywords: string[] = [], query: string 
     return parts.map((part, index) => {
         if (allTerms.some(term => part.toLowerCase() === term.toLowerCase())) {
             return (
-                <mark key={index} className="bg-purple-100 text-purple-900 px-1 rounded">
+                <mark key={index} className="bg-primary/20 dark:bg-primary/30 text-primary dark:text-primary px-1 rounded">
                     {part}
                 </mark>
             );

@@ -9,6 +9,7 @@ import { Modal } from '../../components/ui/Modal';
 import { Loader2, Upload, File, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { TimeoutError, NetworkError } from '../../api/apiClient';
+import { ThemeToggle } from '../../components/ThemeToggle';
 
 const ApplyPage = () => {
     const { jobId } = useParams<{ jobId: string }>();
@@ -229,6 +230,7 @@ const ApplyPage = () => {
 
     return (
         <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 animate-in fade-in duration-500">
+            <ThemeToggle />
             <Card className="max-w-lg w-full">
                 <CardHeader>
                     <CardTitle>Apply for {job.role}</CardTitle>
@@ -321,7 +323,7 @@ const ApplyPage = () => {
                             </div>
                         )}
 
-                        <Button type="submit" className="w-full" disabled={isSubmitting}>
+                        <Button type="submit" className="w-full bg-black dark:bg-gray-800 hover:bg-black/90 dark:hover:bg-gray-700 text-white" disabled={isSubmitting}>
                             {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                             Submit Application
                         </Button>

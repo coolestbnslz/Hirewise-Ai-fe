@@ -15,9 +15,14 @@ const JobFormSchema = z.object({
     company_name: z.string().min(2, "Company name is required"),
     role: z.string().min(2, "Role is required"),
     seniority: z.string().min(2, "Seniority is required"),
-    raw_jd: z.string().min(10, "Job description must be at least 10 characters").optional(),
+    raw_jd: z.string().refine((val) => {
+        if (!val || val.trim() === '') return true; // Allow empty strings
+        return val.length >= 10; // If provided, must be at least 10 characters
+    }, {
+        message: "Job description must be at least 10 characters"
+    }).optional(),
     budget_info: z.string().optional(),
-    must_have_skills: z.string(),
+    must_have_skills: z.string().min(1, "Must-have skills are required"),
     nice_to_have: z.string(),
 });
 
@@ -225,7 +230,7 @@ const CreateJobPage = () => {
                                     <>
                                         <div className="relative">
                                             <Sparkles className="h-5 w-5 animate-pulse" />
-                                            <div className="absolute inset-0 bg-white/30 rounded-full blur-sm animate-ping" />
+                                            <div className="absolute inset-0 bg-card/30 rounded-full blur-sm animate-ping" />
                                         </div>
                                         <span className="text-base font-bold">Extract with AI</span>
                                         <Zap className="h-4 w-4 opacity-80" />
@@ -313,6 +318,7 @@ const CreateJobPage = () => {
                                 placeholder="React, TypeScript, Node.js"
                                 className={highlightedFields.has('must_have_skills') ? 'animate-pulse border-green-400 bg-green-50/50 ring-2 ring-green-300' : ''}
                             />
+                            {form.formState.errors.must_have_skills && <p className="text-red-500 text-xs">{form.formState.errors.must_have_skills.message}</p>}
                         </div>
 
                         <div className="space-y-2">
@@ -333,7 +339,7 @@ const CreateJobPage = () => {
                             />
                         </div>
 
-                        <Button type="submit" className="w-full" disabled={isLoading}>
+                        <Button type="submit" className="w-full bg-black dark:bg-gray-800 hover:bg-black/90 dark:hover:bg-gray-700 text-white" disabled={isLoading}>
                             {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                             {isLoading ? 'Processing...' : 'Create Job'}
                         </Button>
@@ -346,7 +352,7 @@ const CreateJobPage = () => {
                 onClose={() => setClarifyingQuestions(null)}
                 title="Clarifying Questions"
                 footer={
-                    <Button onClick={handleClarificationSubmit} disabled={isLoading}>
+                    <Button onClick={handleClarificationSubmit} disabled={isLoading} className="bg-black dark:bg-gray-800 hover:bg-black/90 dark:hover:bg-gray-700 text-white">
                         {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                         Submit Answers
                     </Button>

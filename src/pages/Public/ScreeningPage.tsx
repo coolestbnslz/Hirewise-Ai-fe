@@ -5,6 +5,7 @@ import { Recorder } from '../../components/Recorder';
 import { Button } from '../../components/ui/Button';
 import { Card, CardContent } from '../../components/ui/Card';
 import { Loader2, CheckCircle2 } from 'lucide-react';
+import { ThemeToggle } from '../../components/ThemeToggle';
 
 const ScreeningPage = () => {
     const { screeningId } = useParams<{ screeningId: string }>();
@@ -64,6 +65,7 @@ const ScreeningPage = () => {
 
     return (
         <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 animate-in fade-in duration-500">
+            <ThemeToggle />
             <div className="max-w-2xl w-full space-y-8">
                 <div className="text-center space-y-2">
                     <h1 className="text-3xl font-bold">Video Screening</h1>
