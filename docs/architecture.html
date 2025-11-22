@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HireWise AI - System Architecture</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#e0e7ff',
+                primaryTextColor: '#1e1b4b',
+                primaryBorderColor: '#4338ca',
+                lineColor: '#6366f1',
+                secondaryColor: '#f3f4f6',
+                tertiaryColor: '#ffffff',
+                fontFamily: 'Inter'
+            },
+            flowchart: {
+                curve: 'basis',
+                htmlLabels: true
+            }
+        });
+    </script>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --bg-color: #f8fafc;
+            --sidebar-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 24px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 4px;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 12px 16px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background-color: #f1f5f9;
+            color: var(--primary);
+        }
+
+        .nav-link.active {
+            background-color: #eef2ff;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 40px 60px;
+        }
+
+        .header {
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .diagram-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 32px;
+            margin-bottom: 40px;
+            border: 1px solid var(--border-color);
+            scroll-margin-top: 40px;
+        }
+
+        .diagram-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .diagram-badge {
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            background-color: #eef2ff;
+            color: var(--primary);
+            border-radius: 9999px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            background-color: #fafafa;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="sidebar">
+        <div class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+            </svg>
+            HireWise AI
+        </div>
+        <ul class="nav-links">
+            <li class="nav-item"><a href="#high-level" class="nav-link">High-Level Architecture</a></li>
+            <li class="nav-item"><a href="#component" class="nav-link">Component Architecture</a></li>
+            <li class="nav-item"><a href="#job-flow" class="nav-link">Job & Matching Flow</a></li>
+            <li class="nav-item"><a href="#app-flow" class="nav-link">Application & Scoring</a></li>
+            <li class="nav-item"><a href="#interview-flow" class="nav-link">Phone Interview Flow</a></li>
+            <li class="nav-item"><a href="#search-flow" class="nav-link">Candidate Search Flow</a></li>
+            <li class="nav-item"><a href="#schema" class="nav-link">Database Schema</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <div class="header">
+            <h1>System Architecture</h1>
+            <p>Technical documentation and data flow diagrams for the HireWise AI platform.</p>
+        </div>
+
+        <div id="high-level" class="diagram-card">
+            <div class="diagram-title">
+                High-Level Architecture
+                <span class="diagram-badge">System Overview</span>
+            </div>
+            <div class="mermaid">
+                graph TB
+                %% Styles
+                classDef client fill:#eef2ff,stroke:#4f46e5,stroke-width:2px,color:#1e1b4b,rx:10,ry:10;
+                classDef api fill:#f0f9ff,stroke:#0ea5e9,stroke-width:2px,color:#0c4a6e,rx:5,ry:5;
+                classDef logic fill:#fdf4ff,stroke:#d946ef,stroke-width:2px,color:#701a75,rx:5,ry:5;
+                classDef ai fill:#fff1f2,stroke:#f43f5e,stroke-width:2px,color:#881337,rx:5,ry:5;
+                classDef data fill:#f0fdf4,stroke:#22c55e,stroke-width:2px,color:#14532d,shape:cylinder;
+                classDef ext fill:#f8fafc,stroke:#64748b,stroke-width:2px,stroke-dasharray: 5 5,color:#334155,rx:5,ry:5;
+
+                subgraph ClientLayer [Client Layer]
+                direction TB
+                HR[HR Dashboard]:::client
+                Candidate[Candidate Portal]:::client
+                end
+
+                subgraph APILayer [API Layer - Express.js]
+                direction TB
+                JobsAPI[Jobs API]:::api
+                ApplicationsAPI[Applications API]:::api
+                UsersAPI[Users API]:::api
+                ScreeningsAPI[Screenings API]:::api
+                AnalysisAPI[Analysis API]:::api
+                EmailAPI[Email API]:::api
+                end
+
+                subgraph LogicLayer [Business Logic Layer]
+                direction TB
+                JDEnhancer[JD Enhancer]:::logic
+                CandidateMatcher[Candidate Matcher]:::logic
+                ResumeParser[Resume Parser]:::logic
+                ScoreCalculator[Score Calculator]:::logic
+                end
+
+                subgraph AIServices [AI & LLM Services]
+                direction TB
+                BedrockAPI[Amazon Bedrock<br />Claude 3.5]:::ai
+                EmbeddingsAPI[Titan Embeddings]:::ai
+                BlandAI[Bland AI<br />Voice Interviews]:::ai
+                end
+
+                subgraph DataLayer [Data Persistence]
+                direction TB
+                MongoDB[(MongoDB)]:::data
+                S3[(AWS S3)]:::data
+                end
+
+                subgraph ExternalServices [External Services]
+                direction TB
+                GitHubAPI[GitHub API]:::ext
+                Mailgun[Mailgun]:::ext
+                end
+
+                %% Connections
+                HR --> JobsAPI & ApplicationsAPI & UsersAPI & ScreeningsAPI & AnalysisAPI & EmailAPI
+                Candidate --> ApplicationsAPI
+
+                JobsAPI --> JDEnhancer & CandidateMatcher & MongoDB
+                ApplicationsAPI --> ResumeParser & ScoreCalculator & BlandAI & GitHubAPI & Mailgun & MongoDB & S3
+                UsersAPI --> CandidateMatcher & BlandAI & GitHubAPI & Mailgun & MongoDB & S3
+                ScreeningsAPI --> ScoreCalculator & MongoDB
+                EmailAPI --> Mailgun
+
+                JDEnhancer --> BedrockAPI
+                CandidateMatcher --> BedrockAPI & EmbeddingsAPI
+                ResumeParser --> BedrockAPI
+                ScoreCalculator --> BedrockAPI
+
+                BlandAI -.->|Webhook| ApplicationsAPI & UsersAPI
+            </div>
+        </div>
+
+        <div id="component" class="diagram-card">
+            <div class="diagram-title">
+                Detailed Component Architecture
+                <span class="diagram-badge">Request Flow</span>
+            </div>
+            <div class="mermaid">
+                graph LR
+                %% Styles
+                classDef request fill:#eef2ff,stroke:#4f46e5,stroke-width:2px,color:#1e1b4b;
+                classDef core fill:#f0f9ff,stroke:#0ea5e9,stroke-width:2px,color:#0c4a6e;
+                classDef storage fill:#f0fdf4,stroke:#22c55e,stroke-width:2px,color:#14532d;
+                classDef ext fill:#fff1f2,stroke:#f43f5e,stroke-width:2px,color:#881337;
+
+                subgraph Flow [Request Flow]
+                Req[HTTP Request]:::request --> Middleware[Express Middleware]:::request
+                Middleware --> Route[Route Handler]:::request
+                Route --> Logic{Business Logic}:::core
+                end
+
+                subgraph Services [Core Services]
+                Logic --> LLM[LLM Service]:::core
+                Logic --> Store[Storage Service]:::core
+                Logic --> Email[Email Service]:::core
+                Logic --> Git[GitHub Service]:::core
+                Logic --> Voice[Bland AI Service]:::core
+                end
+
+                subgraph Data [Data & External]
+                LLM --> Bedrock[Bedrock API]:::ext
+                Store --> DB[(MongoDB)]:::storage & S3[(AWS S3)]:::storage
+                Email --> Mailgun[Mailgun API]:::ext
+                Git --> GitHub[GitHub API]:::ext
+                Voice --> Bland[Bland AI API]:::ext
+                end
+
+                %% Response Flow
+                Bedrock & DB & S3 & Mailgun & GitHub & Bland --> Formatter[Format Response]:::request
+                Formatter --> Res[HTTP Response]:::request
+            </div>
+        </div>
+
+        <div id="job-flow" class="diagram-card">
+            <div class="diagram-title">
+                Job Creation & Candidate Matching Flow
+                <span class="diagram-badge">Sequence</span>
+            </div>
+            <div class="mermaid">
+                sequenceDiagram
+                participant HR as HR User
+                participant API as Jobs API
+                participant LLM as Bedrock LLM
+                participant DB as MongoDB
+                participant Matcher as Candidate Matcher
+
+                HR->>API: POST /api/jobs (Create Job)
+                API->>LLM: Enhance JD & Extract Tags
+                LLM-->>API: Enhanced JD + Tags
+                API->>DB: Save Job
+                API->>Matcher: Find Matching Candidates
+                Matcher->>DB: Query Users (not hired)
+                Matcher->>LLM: Calculate Match Scores
+                LLM-->>Matcher: Scores & Analysis
+                Matcher->>DB: Save JobCandidateMatch
+                API-->>HR: Job Created + Matches
+            </div>
+        </div>
+
+        <div id="app-flow" class="diagram-card">
+            <div class="diagram-title">
+                Application & Scoring Flow
+                <span class="diagram-badge">Sequence</span>
+            </div>
+            <div class="mermaid">
+                sequenceDiagram
+                participant Candidate
+                participant API as Applications API
+                participant Storage as S3/Storage
+                participant LLM as Bedrock LLM
+                participant GitHub as GitHub API
+                participant DB as MongoDB
+
+                Candidate->>API: POST /api/apply/:jobId (Resume)
+                API->>Storage: Upload Resume to S3
+                Storage-->>API: S3 URL
+                API->>DB: Create Application (immediate response)
+                API-->>Candidate: Application Submitted
+
+                Note over API: Async Processing Starts
+                API->>Storage: Extract Resume Text
+                API->>LLM: Parse Resume (structured)
+                LLM-->>API: Parsed Resume Data
+                API->>LLM: Extract Tags & Summary
+                LLM-->>API: Tags & Summary
+                API->>GitHub: Fetch Profile Data
+                GitHub-->>API: Repositories & Profile
+                API->>LLM: Score Resume
+                API->>LLM: Score GitHub/Portfolio
+                API->>LLM: Analyze Compensation
+                LLM-->>API: All Scores
+                API->>DB: Update Application with Scores
+            </div>
+        </div>
+
+        <div id="interview-flow" class="diagram-card">
+            <div class="diagram-title">
+                Phone Interview Flow
+                <span class="diagram-badge">Sequence</span>
+            </div>
+            <div class="mermaid">
+                sequenceDiagram
+                participant HR as HR User
+                participant API as Applications/Users API
+                participant BlandAI as Bland AI
+                participant Candidate
+                participant DB as MongoDB
+
+                HR->>API: POST /schedule-call (userId/applicationId)
+                API->>DB: Get User/Application
+                API->>LLM: Generate Questions
+                LLM-->>API: Interview Questions
+                API->>BlandAI: Initiate Call (with questions)
+                BlandAI-->>API: Call ID
+                API->>DB: Store Call Info
+                API->>Mailgun: Send Email Notification
+                API-->>HR: Call Scheduled
+
+                BlandAI->>Candidate: Make Phone Call
+                Candidate->>BlandAI: Answer Questions
+                BlandAI->>LLM: Transcribe & Analyze
+                LLM-->>BlandAI: Transcript & Analysis
+                BlandAI->>API: Webhook (Call Complete)
+                API->>DB: Update Call Summary
+                API-->>HR: Call Results Available
+            </div>
+        </div>
+
+        <div id="search-flow" class="diagram-card">
+            <div class="diagram-title">
+                Candidate Search Flow
+                <span class="diagram-badge">Sequence</span>
+            </div>
+            <div class="mermaid">
+                sequenceDiagram
+                participant HR as HR User
+                participant API as Users API
+                participant LLM as Bedrock LLM
+                participant DB as MongoDB
+
+                HR->>API: POST /api/users/search (Natural Language)
+                API->>LLM: Extract Search Criteria
+                LLM-->>API: Structured Criteria
+                API->>DB: Query Users (with filters)
+                DB-->>API: Candidate Results
+
+                loop For Each Candidate
+                API->>LLM: Score Candidate
+                LLM-->>API: Match Score & Analysis
+                API->>GitHub: Fetch GitHub Data (if available)
+                GitHub-->>API: Profile Data
+                API->>LLM: Score GitHub/Portfolio
+                LLM-->>API: GitHub Score
+                end
+
+                API->>DB: Save Search Results
+                API-->>HR: Scored Candidates + Search ID
+            </div>
+        </div>
+
+        <div id="schema" class="diagram-card">
+            <div class="diagram-title">
+                Database Schema Relationships
+                <span class="diagram-badge">ER Diagram</span>
+            </div>
+            <div class="mermaid">
+                erDiagram
+                Job ||--o{ Application : "has"
+                User ||--o{ Application : "applies"
+                Job ||--o{ JobCandidateMatch : "matches"
+                User ||--o{ JobCandidateMatch : "matched"
+                Application ||--o| Screening : "has"
+                User ||--o{ CandidateSearch : "found_in"
+                Application ||--o| JobCandidateMatch : "linked_to"
+
+                Job {
+                ObjectId _id
+                string company_name
+                string role
+                string enhanced_jd
+                array must_have_skills
+                array nice_to_have
+                string budget_info
+                array tags
+                }
+
+                User {
+                ObjectId _id
+                string email
+                string name
+                string phone
+                string resumeS3Url
+                string resumeText
+                object parsedResume
+                array tags
+                array phoneInterviewSummaries
+                }
+
+                Application {
+                ObjectId _id
+                ObjectId jobId
+                ObjectId userId
+                number unifiedScore
+                object scores
+                array skillsMatched
+                boolean level1_approved
+                object phoneInterview
+                }
+
+                JobCandidateMatch {
+                ObjectId _id
+                ObjectId jobId
+                ObjectId userId
+                number matchScore
+                string status
+                }
+
+                Screening {
+                ObjectId _id
+                ObjectId applicationId
+                string videoUrl
+                object scoring
+                }
+
+                CandidateSearch {
+                ObjectId _id
+                string searchText
+                array shortlistedUsers
+                array rejectedUsers
+                }
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Active link highlighting
+        const sections = document.querySelectorAll('.diagram-card');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= (sectionTop - 150)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

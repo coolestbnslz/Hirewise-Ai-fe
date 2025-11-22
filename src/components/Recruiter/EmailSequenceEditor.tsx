@@ -14,7 +14,7 @@ interface EmailSequenceEditorProps {
     isOpen: boolean;
     onClose: () => void;
     candidateId: string;
-    screeningId: string;
+    screeningId?: string;
     initialSubject?: string;
     initialContent?: string;
 }
@@ -85,9 +85,10 @@ export const EmailSequenceEditor: React.FC<EmailSequenceEditorProps> = ({
                         })
                     });
                 } else if (step.type === 'Call') {
-                    await request(`/api/screenings/${screeningId}/schedule-call`, {
+                    await request(`/api/applications/${candidateId}/schedule-call`, {
                         method: 'POST',
                         body: JSON.stringify({
+                            userId: candidateId,
                             start_time: "2024-12-25 14:30:00 +05:30"
                         })
                     });
