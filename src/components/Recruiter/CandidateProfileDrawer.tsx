@@ -5,7 +5,8 @@ import { motion } from 'framer-motion';
 import {
     Linkedin, Github, Mail, Phone, ExternalLink, MapPin,
     Building2, GraduationCap, Download,
-    Briefcase, Code2, Award, BookOpen, DollarSign, Zap, FileText, X, Loader2, Bot
+    Briefcase, Code2, Award, BookOpen, DollarSign, Zap, FileText, X, Loader2, Bot,
+    MessageSquare, TrendingUp, AlertCircle, CheckCircle, Users
 } from 'lucide-react';
 import { applicationsApi } from '../../api/applications';
 import { searchApi } from '../../api/search';
@@ -28,13 +29,80 @@ export const CandidateProfileDrawer: React.FC<CandidateProfileDrawerProps> = ({
     searchId,
     isRejected = false
 }) => {
-    const [activeTab, setActiveTab] = useState<'overview' | 'experience' | 'education' | 'projects' | 'skills'>('overview');
+    const [activeTab, setActiveTab] = useState<'overview' | 'experience' | 'education' | 'projects' | 'skills' | 'callsummary'>('overview');
     const [isDownloadingResume, setIsDownloadingResume] = useState(false);
     const [isEmailEditorOpen, setIsEmailEditorOpen] = useState(false);
     const [isApprovingForSequence, setIsApprovingForSequence] = useState(false);
     const [emailPrefillData, setEmailPrefillData] = useState<{ subject?: string; content?: string } | null>(null);
     const [isRejecting, setIsRejecting] = useState(false);
+    const [fullCandidateData, setFullCandidateData] = useState<any>(null);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+    // Fetch full user profile including phoneInterviewSummaries when drawer opens
+    useEffect(() => {
+        if (!isOpen || !candidate) {
+            setFullCandidateData(null);
+            return;
+        }
+
+        console.log('🔍 Checking for phoneInterviewSummaries:', {
+            hasCandidate: !!candidate,
+            candidatePhoneInterviews: candidate.phoneInterviewSummaries,
+            candidateCandidatePhoneInterviews: candidate.candidate?.phoneInterviewSummaries,
+            candidateKeys: candidate ? Object.keys(candidate).slice(0, 20) : [],
+            phoneInterviewSummariesType: typeof candidate.phoneInterviewSummaries,
+            phoneInterviewSummariesIsArray: Array.isArray(candidate.phoneInterviewSummaries),
+            phoneInterviewSummariesLength: Array.isArray(candidate.phoneInterviewSummaries) ? candidate.phoneInterviewSummaries.length : 'not array'
+        });
+
+        // If candidate already has phoneInterviewSummaries (at root or nested), use it immediately
+        if (candidate.phoneInterviewSummaries || candidate.candidate?.phoneInterviewSummaries) {
+            console.log('✅ Candidate already has phoneInterviewSummaries, using immediately', {
+                atRoot: !!candidate.phoneInterviewSummaries,
+                inCandidate: !!candidate.candidate?.phoneInterviewSummaries,
+                count: candidate.phoneInterviewSummaries?.length || candidate.candidate?.phoneInterviewSummaries?.length || 0
+            });
+            setFullCandidateData(candidate);
+            return;
+        }
+
+        // Extract userId to fetch full profile
+        const userId = candidate.userId || candidate.id || candidate._id || candidate.candidate?.userId || candidate.candidate?.id || '';
+
+        console.log('🔄 Need to fetch full profile. userId:', userId);
+
+        // Fetch full profile if we have userId and don't have phoneInterviewSummaries
+        if (userId) {
+            const fetchFullProfile = async () => {
+                try {
+                    console.log('📡 Fetching full profile for userId:', userId);
+                    const fullProfile: any = await searchApi.getUserProfile(userId);
+                    console.log('✅ Fetched full profile:', {
+                        hasPhoneInterviews: !!fullProfile.phoneInterviewSummaries,
+                        phoneInterviewsCount: fullProfile.phoneInterviewSummaries?.length || 0,
+                        phoneInterviewSummaries: fullProfile.phoneInterviewSummaries
+                    });
+                    // Merge the full profile with existing candidate data
+                    const mergedData = {
+                        ...candidate,
+                        ...fullProfile,
+                        phoneInterviewSummaries: fullProfile.phoneInterviewSummaries || candidate.phoneInterviewSummaries || [],
+                    };
+                    console.log('📦 Setting fullCandidateData with phoneInterviewSummaries:', mergedData.phoneInterviewSummaries?.length || 0);
+                    setFullCandidateData(mergedData);
+                } catch (error) {
+                    console.error('❌ Failed to fetch full user profile:', error);
+                    // If fetch fails, use existing candidate data
+                    setFullCandidateData(candidate);
+                }
+            };
+            fetchFullProfile();
+        } else {
+            console.log('⚠️ No userId available, using existing candidate data');
+            // No userId available, use existing candidate data
+            setFullCandidateData(candidate);
+        }
+    }, [isOpen, candidate]);
 
     // Handle scroll tracking on the parent scroll container
     useEffect(() => {
@@ -80,14 +148,17 @@ export const CandidateProfileDrawer: React.FC<CandidateProfileDrawerProps> = ({
         return () => scrollContainer.removeEventListener('scroll', handleScroll);
     }, [isOpen, activeTab]);
 
-    if (!candidate) return null;
+    // Use fullCandidateData if available, otherwise fall back to candidate
+    const displayCandidate = fullCandidateData || candidate;
+
+    if (!displayCandidate) return null;
 
     // Extract userId for resume download
-    const userId = candidate.userId || candidate.id || candidate._id || candidate.candidate?.userId || candidate.candidate?.id || '';
+    const userId = displayCandidate.userId || displayCandidate.id || displayCandidate._id || displayCandidate.candidate?.userId || displayCandidate.candidate?.id || '';
     // Extract applicationId for approve-level1
-    const applicationId = candidate.id || candidate.applicationId || candidate._id || '';
+    const applicationId = displayCandidate.id || displayCandidate.applicationId || displayCandidate._id || '';
 
-    const parsedResume = candidate.parsedResume || candidate.candidate?.parsedResume || {};
+    const parsedResume = displayCandidate.parsedResume || displayCandidate.candidate?.parsedResume || {};
     const contact = parsedResume.contact || {};
     const experience = parsedResume.experience || [];
     const education = parsedResume.education || [];
@@ -95,11 +166,11 @@ export const CandidateProfileDrawer: React.FC<CandidateProfileDrawerProps> = ({
     const skills = parsedResume.skills || {};
 
     // Extract candidate name from multiple possible locations
-    const candidateName = candidate.name || candidate.candidateName || candidate.candidate?.name || contact.name || parsedResume.name || 'Candidate';
+    const candidateName = displayCandidate.name || displayCandidate.candidateName || displayCandidate.candidate?.name || contact.name || parsedResume.name || 'Candidate';
 
-    const scores = candidate.scores || {};
-    const unifiedScore = scores.unifiedScore ?? candidate.matchScore ?? candidate.alignmentScore ?? null;
-    const resumeScore = scores.resumeScore ?? candidate.resumeScore ?? null;
+    const scores = displayCandidate.scores || {};
+    const unifiedScore = scores.unifiedScore ?? displayCandidate.matchScore ?? displayCandidate.alignmentScore ?? null;
+    const resumeScore = scores.resumeScore ?? displayCandidate.resumeScore ?? null;
     const githubScore = scores.githubPortfolioScore ?? null;
     const compensationScore = scores.compensationScore ?? null;
     const aiToolsCompatibilityScore = scores.aiToolsCompatibilityScore ?? null;
@@ -159,12 +230,41 @@ export const CandidateProfileDrawer: React.FC<CandidateProfileDrawerProps> = ({
     ].filter(item => item.value !== undefined && item.value !== null || item.value === null); // Keep nulls for NA handling
 
     const socialLinks = {
-        linkedin: contact.linkedin || candidate.candidate?.linkedin || candidate.socialLinks?.linkedin,
-        github: contact.github || candidate.candidate?.github || candidate.socialLinks?.github,
-        portfolio: contact.portfolio || candidate.candidate?.portfolio || candidate.socialLinks?.portfolio,
-        email: contact.email || candidate.email,
-        phone: contact.phone || candidate.phone
+        linkedin: contact.linkedin || displayCandidate.candidate?.linkedin || displayCandidate.socialLinks?.linkedin,
+        github: contact.github || displayCandidate.candidate?.github || displayCandidate.socialLinks?.github,
+        portfolio: contact.portfolio || displayCandidate.candidate?.portfolio || displayCandidate.socialLinks?.portfolio,
+        email: contact.email || displayCandidate.email,
+        phone: contact.phone || displayCandidate.phone
     };
+
+    // Check if candidate has phone interview summaries (check multiple locations)
+    const phoneInterviewsFromDisplay = displayCandidate?.phoneInterviewSummaries;
+    const phoneInterviewsFromCandidate = candidate?.phoneInterviewSummaries;
+    const phoneInterviewsFromNestedCandidate = candidate?.candidate?.phoneInterviewSummaries;
+    const phoneInterviewsFromDisplayNested = displayCandidate?.candidate?.phoneInterviewSummaries;
+    
+    const hasPhoneInterviews = 
+        (phoneInterviewsFromDisplay && Array.isArray(phoneInterviewsFromDisplay) && phoneInterviewsFromDisplay.length > 0) ||
+        (phoneInterviewsFromCandidate && Array.isArray(phoneInterviewsFromCandidate) && phoneInterviewsFromCandidate.length > 0) ||
+        (phoneInterviewsFromNestedCandidate && Array.isArray(phoneInterviewsFromNestedCandidate) && phoneInterviewsFromNestedCandidate.length > 0) ||
+        (phoneInterviewsFromDisplayNested && Array.isArray(phoneInterviewsFromDisplayNested) && phoneInterviewsFromDisplayNested.length > 0);
+
+    console.log('🏷️ Tab computation:', {
+        hasDisplayCandidate: !!displayCandidate,
+        hasFullCandidateData: !!fullCandidateData,
+        phoneInterviewsFromDisplay: phoneInterviewsFromDisplay?.length || 0,
+        phoneInterviewsFromCandidate: phoneInterviewsFromCandidate?.length || 0,
+        phoneInterviewsFromNestedCandidate: phoneInterviewsFromNestedCandidate?.length || 0,
+        phoneInterviewsFromDisplayNested: phoneInterviewsFromDisplayNested?.length || 0,
+        hasPhoneInterviews,
+        willShowTab: hasPhoneInterviews,
+        allChecks: {
+            check1: phoneInterviewsFromDisplay && Array.isArray(phoneInterviewsFromDisplay) && phoneInterviewsFromDisplay.length > 0,
+            check2: phoneInterviewsFromCandidate && Array.isArray(phoneInterviewsFromCandidate) && phoneInterviewsFromCandidate.length > 0,
+            check3: phoneInterviewsFromNestedCandidate && Array.isArray(phoneInterviewsFromNestedCandidate) && phoneInterviewsFromNestedCandidate.length > 0,
+            check4: phoneInterviewsFromDisplayNested && Array.isArray(phoneInterviewsFromDisplayNested) && phoneInterviewsFromDisplayNested.length > 0,
+        }
+    });
 
     const tabs = [
         { id: 'overview', label: 'Overview', icon: BookOpen },
@@ -172,7 +272,10 @@ export const CandidateProfileDrawer: React.FC<CandidateProfileDrawerProps> = ({
         { id: 'education', label: 'Education', icon: GraduationCap },
         { id: 'projects', label: 'Projects', icon: Code2 },
         { id: 'skills', label: 'Skills', icon: Award },
+        ...(hasPhoneInterviews ? [{ id: 'callsummary', label: 'Call Summary', icon: Phone }] : []),
     ];
+
+    console.log('📋 Final tabs array:', tabs.map(t => t.id), 'total tabs:', tabs.length);
 
     const handleDownloadResume = async () => {
         if (!userId) {
@@ -313,12 +416,12 @@ export const CandidateProfileDrawer: React.FC<CandidateProfileDrawerProps> = ({
                                 <div className="min-w-0">
                                     <h1 className="text-2xl font-bold text-foreground truncate">{candidateName}</h1>
                                     <p className="text-muted-foreground font-medium truncate text-base mt-0.5">
-                                        {candidate.role || experience[0]?.title || 'Candidate'}
+                                        {displayCandidate.role || experience[0]?.title || 'Candidate'}
                                     </p>
-                                    {(candidate.location || experience[0]?.location) && (
+                                    {(displayCandidate.location || experience[0]?.location) && (
                                         <div className="flex items-center gap-1.5 text-muted-foreground text-sm mt-0.5">
                                             <MapPin className="h-3.5 w-3.5" />
-                                            {candidate.location || experience[0]?.location}
+                                            {displayCandidate.location || experience[0]?.location}
                                         </div>
                                     )}
                                 </div>
@@ -585,58 +688,17 @@ export const CandidateProfileDrawer: React.FC<CandidateProfileDrawerProps> = ({
                                 </section>
 
                                 {/* Key Highlights */}
-                                {candidate.topReasons && candidate.topReasons.length > 0 && (
+                                {displayCandidate.topReasons && displayCandidate.topReasons.length > 0 && (
                                     <section className="bg-card rounded-xl p-6 shadow-sm border border-border">
                                         <h3 className="text-lg font-semibold text-foreground mb-4">Why they're a match</h3>
                                         <ul className="space-y-3">
-                                            {candidate.topReasons.map((reason: string, i: number) => (
+                                            {displayCandidate.topReasons.map((reason: string, i: number) => (
                                                 <li key={i} className="flex items-start gap-3 text-foreground">
                                                     <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-green-500 flex-shrink-0" />
                                                     {reason}
                                                 </li>
                                             ))}
                                         </ul>
-                                    </section>
-                                )}
-
-                                {/* Call Summary */}
-                                {(candidate.phoneInterviewSummaries && candidate.phoneInterviewSummaries.length > 0) && (
-                                    <section className="bg-card rounded-xl p-6 shadow-sm border border-border">
-                                        <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                                            <Phone className="h-5 w-5 text-green-600 dark:text-green-400" />
-                                            Call Summary
-                                        </h3>
-                                        <div className="space-y-4">
-                                            {candidate.phoneInterviewSummaries.map((summary: any, i: number) => (
-                                                <div key={i} className="border-l-2 border-green-500 pl-4">
-                                                    {summary.callDate && (
-                                                        <p className="text-xs text-muted-foreground mb-2">
-                                                            {new Date(summary.callDate).toLocaleDateString('en-US', {
-                                                                year: 'numeric',
-                                                                month: 'long',
-                                                                day: 'numeric',
-                                                                hour: '2-digit',
-                                                                minute: '2-digit'
-                                                            })}
-                                                        </p>
-                                                    )}
-                                                    <p className="text-foreground leading-relaxed whitespace-pre-line">
-                                                        {summary.summary || summary.transcript || 'No summary available'}
-                                                    </p>
-                                                    {summary.sentiment && (
-                                                        <div className="mt-2 flex items-center gap-2">
-                                                            <span className="text-xs font-medium text-muted-foreground">Sentiment:</span>
-                                                            <span className={`text-xs font-semibold ${summary.sentiment === 'positive' ? 'text-green-600' :
-                                                                    summary.sentiment === 'negative' ? 'text-red-600' :
-                                                                        'text-yellow-600'
-                                                                }`}>
-                                                                {summary.sentiment.charAt(0).toUpperCase() + summary.sentiment.slice(1)}
-                                                            </span>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            ))}
-                                        </div>
                                     </section>
                                 )}
                             </div>
@@ -794,13 +856,13 @@ export const CandidateProfileDrawer: React.FC<CandidateProfileDrawerProps> = ({
                                                 </div>
                                             );
                                         })}
-                                        {candidate.tags && (
+                                        {displayCandidate.tags && (
                                             <div>
                                                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
                                                     Other Tags
                                                 </h3>
                                                 <div className="flex flex-wrap gap-2">
-                                                    {candidate.tags.map((tag: string, i: number) => (
+                                                    {displayCandidate.tags.map((tag: string, i: number) => (
                                                         <span key={i} className="px-3 py-1.5 rounded-lg bg-muted text-foreground text-sm font-medium">
                                                             {tag}
                                                         </span>
@@ -811,6 +873,228 @@ export const CandidateProfileDrawer: React.FC<CandidateProfileDrawerProps> = ({
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Call Summary Section */}
+                            {hasPhoneInterviews && (
+                                <div id="callsummary" className="scroll-mt-20 space-y-6">
+                                    <h3 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
+                                        <Phone className="h-5 w-5 text-muted-foreground" />
+                                        Call Summary
+                                    </h3>
+                                    <div className="space-y-6">
+                                        {((displayCandidate?.phoneInterviewSummaries || candidate?.phoneInterviewSummaries || candidate?.candidate?.phoneInterviewSummaries || displayCandidate?.candidate?.phoneInterviewSummaries) || []).map((summary: any, i: number) => (
+                                            <div key={i} className="bg-card rounded-xl p-6 shadow-sm border border-border space-y-6">
+                                                {/* Call Details */}
+                                                <div className="border-l-2 border-green-500 pl-4 space-y-3">
+                                                        {/* Date and Time Info */}
+                                                        <div className="space-y-1">
+                                                            {summary.callDate && (
+                                                                <p className="text-xs text-muted-foreground">
+                                                                    Call Date: {new Date(summary.callDate).toLocaleDateString('en-US', {
+                                                                        year: 'numeric',
+                                                                        month: 'long',
+                                                                        day: 'numeric',
+                                                                        hour: '2-digit',
+                                                                        minute: '2-digit'
+                                                                    })}
+                                                                </p>
+                                                            )}
+                                                            {(summary.startedAt || summary.completedAt) && (
+                                                                <p className="text-xs text-muted-foreground">
+                                                                    {summary.startedAt && (
+                                                                        <>Started: {new Date(summary.startedAt).toLocaleDateString('en-US', {
+                                                                            year: 'numeric',
+                                                                            month: 'long',
+                                                                            day: 'numeric',
+                                                                            hour: '2-digit',
+                                                                            minute: '2-digit'
+                                                                        })}</>
+                                                                    )}
+                                                                    {summary.completedAt && summary.startedAt && ' • '}
+                                                                    {summary.completedAt && (
+                                                                        <>Completed: {new Date(summary.completedAt).toLocaleDateString('en-US', {
+                                                                            year: 'numeric',
+                                                                            month: 'long',
+                                                                            day: 'numeric',
+                                                                            hour: '2-digit',
+                                                                            minute: '2-digit'
+                                                                        })}</>
+                                                                    )}
+                                                                    {summary.duration && ` • Duration: ${Math.floor(summary.duration / 60)}m ${summary.duration % 60}s`}
+                                                                </p>
+                                                            )}
+                                                            {summary.phoneNumber && (
+                                                                <p className="text-xs text-muted-foreground">
+                                                                    Phone: {summary.phoneNumber}
+                                                                </p>
+                                                            )}
+                                                            {summary.status && (
+                                                                <p className="text-xs text-muted-foreground">
+                                                                    Status: <span className={`font-semibold ${summary.status === 'completed' ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400'}`}>
+                                                                        {summary.status.charAt(0).toUpperCase() + summary.status.slice(1)}
+                                                                    </span>
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                        
+                                                        {/* Summary Text */}
+                                                        <p className="text-foreground leading-relaxed whitespace-pre-line">
+                                                            {summary.summary || summary.transcript || 'No summary available'}
+                                                        </p>
+                                                        
+                                                        {/* Sentiment */}
+                                                        {summary.sentiment && (
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="text-xs font-medium text-muted-foreground">Sentiment:</span>
+                                                                <span className={`text-xs font-semibold ${summary.sentiment === 'positive' ? 'text-green-600' :
+                                                                        summary.sentiment === 'negative' ? 'text-red-600' :
+                                                                            'text-yellow-600'
+                                                                    }`}>
+                                                                    {summary.sentiment.charAt(0).toUpperCase() + summary.sentiment.slice(1)}
+                                                                </span>
+                                                            </div>
+                                                        )}
+                                                        
+                                                        {/* Recording URL */}
+                                                        {summary.recordingUrl && (
+                                                            <div className="pt-2">
+                                                                <a 
+                                                                    href={summary.recordingUrl} 
+                                                                    target="_blank" 
+                                                                    rel="noopener noreferrer"
+                                                                    className="inline-flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                                                                >
+                                                                    <ExternalLink className="h-4 w-4" />
+                                                                    Listen to Recording
+                                                                </a>
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                {/* Interview Analysis */}
+                                                {summary.analysis && (
+                                                    <div className="pt-6 border-t border-border">
+                                                        <div className="flex items-center gap-2 mb-6">
+                                                            <MessageSquare className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                                                            <h4 className="text-lg font-semibold text-foreground">Interview Analysis</h4>
+                                                        </div>
+                                                        <div className="space-y-5">
+                                                            {/* Header with scores */}
+                                                            <div className="flex items-start justify-between gap-4 pb-4 border-b border-border">
+                                                                <div>
+                                                                    {(summary.startedAt || summary.completedAt) && (
+                                                                        <p className="text-sm text-muted-foreground">
+                                                                            {summary.startedAt ? new Date(summary.startedAt).toLocaleDateString('en-US', {
+                                                                                year: 'numeric',
+                                                                                month: 'long',
+                                                                                day: 'numeric'
+                                                                            }) : summary.completedAt ? new Date(summary.completedAt).toLocaleDateString('en-US', {
+                                                                                year: 'numeric',
+                                                                                month: 'long',
+                                                                                day: 'numeric'
+                                                                            }) : ''}
+                                                                        </p>
+                                                                    )}
+                                                                </div>
+                                                                <div className="flex gap-4">
+                                                                    {summary.analysis.communication_quality !== undefined && (
+                                                                        <div className="text-center">
+                                                                            <p className="text-xs text-muted-foreground mb-1">Communication</p>
+                                                                            <div className="flex items-center gap-1">
+                                                                                <MessageSquare className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                                                                                <span className="text-lg font-bold text-foreground">{summary.analysis.communication_quality}/10</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
+                                                                    {summary.analysis.overall_fit !== undefined && (
+                                                                        <div className="text-center">
+                                                                            <p className="text-xs text-muted-foreground mb-1">Overall Fit</p>
+                                                                            <div className="flex items-center gap-1">
+                                                                                <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+                                                                                <span className="text-lg font-bold text-foreground">{summary.analysis.overall_fit}/10</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+
+                                                            {/* Technical Skills */}
+                                                            {summary.analysis.technical_skills && summary.analysis.technical_skills.length > 0 && (
+                                                                <div>
+                                                                    <div className="flex items-center gap-2 mb-3">
+                                                                        <Code2 className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                                                                        <h5 className="text-sm font-semibold text-foreground">Technical Skills</h5>
+                                                                    </div>
+                                                                    <div className="flex flex-wrap gap-2">
+                                                                        {summary.analysis.technical_skills.map((skill: string, idx: number) => (
+                                                                            <span key={idx} className="px-3 py-1.5 rounded-lg bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300 text-sm font-medium border border-purple-200 dark:border-purple-800">
+                                                                                {skill}
+                                                                            </span>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+                                                            )}
+
+                                                            {/* Behavioral Traits */}
+                                                            {summary.analysis.behavioral_traits && summary.analysis.behavioral_traits.length > 0 && (
+                                                                <div>
+                                                                    <div className="flex items-center gap-2 mb-3">
+                                                                        <Users className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                                                                        <h5 className="text-sm font-semibold text-foreground">Behavioral Traits</h5>
+                                                                    </div>
+                                                                    <div className="flex flex-wrap gap-2">
+                                                                        {summary.analysis.behavioral_traits.map((trait: string, idx: number) => (
+                                                                            <span key={idx} className="px-3 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 text-sm font-medium border border-indigo-200 dark:border-indigo-800">
+                                                                                {trait}
+                                                                            </span>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+                                                            )}
+
+                                                            {/* Strengths */}
+                                                            {summary.analysis.strengths && summary.analysis.strengths.length > 0 && (
+                                                                <div>
+                                                                    <div className="flex items-center gap-2 mb-3">
+                                                                        <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
+                                                                        <h5 className="text-sm font-semibold text-foreground">Strengths</h5>
+                                                                    </div>
+                                                                    <ul className="space-y-2">
+                                                                        {summary.analysis.strengths.map((strength: string, idx: number) => (
+                                                                            <li key={idx} className="flex items-start gap-2 text-foreground">
+                                                                                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-green-500 flex-shrink-0" />
+                                                                                <span className="text-sm leading-relaxed">{strength}</span>
+                                                                            </li>
+                                                                        ))}
+                                                                    </ul>
+                                                                </div>
+                                                            )}
+
+                                                            {/* Concerns */}
+                                                            {summary.analysis.concerns && summary.analysis.concerns.length > 0 && (
+                                                                <div>
+                                                                    <div className="flex items-center gap-2 mb-3">
+                                                                        <AlertCircle className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                                                                        <h5 className="text-sm font-semibold text-foreground">Concerns</h5>
+                                                                    </div>
+                                                                    <ul className="space-y-2">
+                                                                        {summary.analysis.concerns.map((concern: string, idx: number) => (
+                                                                            <li key={idx} className="flex items-start gap-2 text-foreground">
+                                                                                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-orange-500 flex-shrink-0" />
+                                                                                <span className="text-sm leading-relaxed">{concern}</span>
+                                                                            </li>
+                                                                        ))}
+                                                                    </ul>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -822,7 +1106,7 @@ export const CandidateProfileDrawer: React.FC<CandidateProfileDrawerProps> = ({
                     setEmailPrefillData(null); // Reset prefill data when closing
                 }}
                 candidateId={userId}
-                screeningId={candidate.screeningId || candidate.screening?.id || candidate.applicationId || candidate.id || ''}
+                screeningId={displayCandidate.screeningId || displayCandidate.screening?.id || displayCandidate.applicationId || displayCandidate.id || ''}
                 initialSubject={emailPrefillData?.subject}
                 initialContent={emailPrefillData?.content}
             />

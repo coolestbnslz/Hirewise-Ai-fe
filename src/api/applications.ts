@@ -33,6 +33,7 @@ export interface Application {
     matchInfo?: any;
     // Additional fields for UI
     parsedResume?: CandidateProfile['parsedResume'];
+    phoneInterviewSummaries?: any[]; // Phone interview summaries from API
 }
 
 // Helper function to format status for display
@@ -231,6 +232,7 @@ export const applicationsApi = {
                 scores: scores,
                 matchInfo: app.matchInfo,
                 parsedResume: app.parsedResume || candidate.parsedResume,
+                phoneInterviewSummaries: app.phoneInterviewSummaries || candidate.phoneInterviewSummaries || app.candidate?.phoneInterviewSummaries,
             };
         });
     },
